@@ -2,28 +2,30 @@
 
 # include <stdlib.h>
 # include <string.h>
-
+# include <stdio.h>
 # include "list.h"
-# include "tests.h"
 
 void print_list(struct list *list)
 {
   int line = 1;
   printf("[");
-  if (list->next) {
-    goto pastfst;
-    while (list->next) {
-      line += printf(";");
-      if (line > 72) {
-	printf("\n ");
-	line = 1;
-      }
-    pastfst:
-      line += printf(" %d", list->next->data);
-      list = list->next;
+  if (list->next)
+    {
+      goto pastfst;
+      while (list->next)
+	{
+	  line += printf(";");
+	  if (line > 72)
+	    {
+	      printf("\n ");
+	      line = 1;
+	    }
+	pastfst:
+	  line += printf(" %d", list->next->data);
+	  list = list->next;
+	}
     }
-  }
-  printf("]");
+  printf(" ]");
 }
 
 
@@ -40,7 +42,6 @@ void print_list(struct list *list)
  */
 void list_init(struct list *list)
 {
-  list -> data = 0;
   list -> next = NULL;
 }
 /*
@@ -62,7 +63,7 @@ int list_is_empty(struct list *list)
 size_t list_len(struct list *list)
 {
   size_t i = 0;
-  for(; list != NULL; list = list -> next)
+  for(; list -> next != NULL; list = list -> next)
     i++;
   return i;
 }
@@ -132,13 +133,20 @@ int list_is_sorted(struct list *list)
  */
 void list_insert(struct list *list, struct list *elm)
 {
-  while (list -> next != NULL && list -> data < list -> next -> data)
-    list = list -> next;
-  if (list -> next != NULL)
+  if (elm != NULL)
     {
-      elm -> next = list -> next;     
-    }
-  list -> next = elm;
+      while((list -> next != NULL) && (elm -> data > list -> next -> data))
+	{  list = list -> next;  }
+      if (list -> next != NULL)
+	{
+	  elm -> next = list -> next;
+	  list -> next = elm;
+	}
+      else
+	{
+	  list -> next = elm;
+	}
+    }    
 }
 
 /*
@@ -149,54 +157,57 @@ void list_insert(struct list *list, struct list *elm)
  * list_rev(list)
  * reverse the list using the same nodes (just move them) and the same sentinel.
  */
-void list_rev2(struct list *list){
-  if(list -> next -> next){
-    struct list *prev = malloc(sizeof(struct list));
-    struct list *prev2 = malloc(sizeof(struct list));
-    struct list *prev3 = malloc(sizeof(struct list));
-    prev = NULL;
-    prev2 = list -> next;
-    prev3 = prev2 -> next;
-    while(prev3 != NULL){
-      prev2 -> next = prev;
-      prev = prev2;
-      prev2 = prev3;
-      prev3 = prev3 -> next;
-    }
-    prev2 -> next = prev;
-    list -> next = prev2;
-  }
-}
-
+/*
 void list_rev(struct list *list)
 {
+  printf("%d", list -> next -> data);
   size_t i = 0;
+  size_t j = 0;
   struct list *cur;
-  struct list *stl = list;
+  struct list *stl = list -> next;
   int change;
-  while (list -> next != NULL)
+  printf("%d", list -> data);
+  while (stl -> next != NULL)
     {
-      list = list -> next;
+      stl = stl -> next;
       i++;
     }
-  cur = list;
-  list = stl -> next;
-  change = list -> data;
-  list -> data = cur -> data;
+  cur = stl;
+  stl = list -> next;
+  change = stl -> data;
+  stl -> data = cur -> data;
   cur -> data = change;
-  while (list != cur)
+  printf("%d", list -> data);
+  while(i - j > 1)
     {
-      cur = list;
-      for(size_t j = 1; i - j > 0; j++ )
+      for(; i - j  > 1; j++ )
 	{
 	  cur = cur -> next;
 	}
-      change = list -> data;
-      list -> data = cur -> data;
+      change = stl -> data;
+      stl -> data = cur -> data;
       cur -> data = change;
-      list = list -> next;
+      stl = stl -> next;
+      cur = stl;
+      printf("%d", list -> data);
       //i++;
     }
+}
+*/
+
+void list_rev(struct list *list)
+{
+  struct list* prev = NULL;
+  struct list* cur = list->next;
+  struct list* next;
+  while (cur != NULL)
+    {
+      next = cur -> next;
+      cur -> next = prev;
+      prev = cur;
+      cur = next;
+    }
+  list->next = prev;
 }
 
 /*
@@ -214,82 +225,83 @@ void list_half_split(struct list *list, struct list *second)
   size_t mid = i / 2;
   for(; mid > 0; mid --)
     list = list -> next;
-  for(; list -> next != NULL; list = list -> next)
-    list_insert(second, list);
+  second -> next = list -> next;
+  list -> next = NULL;
 }
 
+void freelist(struct list *liste)
+{
+  if (liste -> next == NULL)
+    {
+      liste = liste -> next;
+      freelist(liste);
+    }
+  free(liste);
+}
 
 int main(){
-  struct list *liste = malloc(sizeof(struct list));
-  list_init(liste);
-  //printf("%d\n", list_is_empty(liste));
-  /*struct list *liste2 = malloc(sizeof(struct list));
-    liste2 -> data = 60;
-    list_push_front(liste, liste2);
-    struct list *liste4 = malloc(sizeof(struct list));
-        liste4 -> data = 42;
-        list_push_front(liste, liste4);
-	printf("%zu\n", list_len(liste));
-	print_list(liste);
-	printf("\n");*/
-  //struct list *liste3 = malloc(sizeof(struct list));
-  //list_init(liste3);
-  //liste3 = list_pop_front(liste);
-  //print_list(liste3);
-  //printf("\n");
-  //print_list(liste);
-  /*struct list *liste5 = malloc(sizeof(struct list));
-        list_init(liste5);
-	liste5 -> next = list_find(liste, 60);
-	print_list(liste5);*/
-  printf("is sorted:");
-  printf("\n");
-  printf("%d\n", list_is_sorted(liste));
+  struct list *sentinelle = malloc(sizeof(struct list));
+  list_init(sentinelle);
+  
   struct list *liste6 = malloc(sizeof(struct list));
-  liste6 -> data = 61;
-  printf("Insertion de:");
-  print_list(liste);
-  print_list(liste6);
-  list_insert(liste, liste6);
+  list_push_front(sentinelle, liste6);
+  liste6->next = NULL;
+  liste6->data = 61;
+  struct list *liste7 = malloc(sizeof(struct list));
+  liste7->next = NULL;
+  liste7->data = 69;
+  
+  printf("Insertion de: ");
+  print_list(sentinelle);
+  printf(" %d", liste7->data);
+  list_insert(sentinelle, liste7);
   printf("\n");
-  print_list(liste);
-  //print_list(liste);
+  print_list(sentinelle);
+  printf("\n");
   printf("\n");
   
   struct list *liste8 = malloc(sizeof(struct list));
-  liste8 -> data = 69;
-  printf("Insertion de:");
-  print_list(liste);
-  print_list(liste8);
+  liste8 -> data = 43 ;
+  liste8 -> next = NULL;
+  
+  printf("Insertion de: ");
+  print_list(sentinelle);
+  printf(" %d", liste8 -> data);
   printf("\n");
-  list_insert(liste, liste8);
-  // print_list(liste);
-  print_list(liste);
+  list_insert(sentinelle, liste8);
+  print_list(sentinelle);
+  printf("\n");
+  printf("\n");
+
+  printf(" %lu \n", list_len(sentinelle));
+ 
+  printf("List_rev de: ");
+  print_list(sentinelle);
+  printf("\n");
+  list_rev(sentinelle);
+  print_list(sentinelle);
+  printf("\n");
   printf("\n");
   
-  
-  struct list *liste7 = malloc(sizeof(struct list));
-  liste7 = liste;
-  printf("List_rev de");
-  print_list(liste7);
-  printf("\n");
-  list_rev(liste7);
-  print_list(liste7);
-  printf("\n");
-  
-  //print_list(liste);
   struct list *liste9 = malloc(sizeof(struct list));
-  list_init(liste9);
+  liste9 -> next = NULL;
+
   printf("Half split");
   printf("\n");
-  print_list(liste);
+  print_list(sentinelle);
   printf("\n");
-  
-  list_half_split(liste, liste9);
+  list_half_split(sentinelle, liste9);
   print_list(liste9);
   printf("\n");
-  //print_list(liste);
-  //free(liste3);
-  free(liste);
+  printf("\n");
+  
+  freelist(sentinelle);
+  //freelist(liste6);
+  //freelist(liste7);
+  //freelist(liste);
+  //freelist(liste9);
+  
   return 0;
+  printf("\n");
+  
 }
