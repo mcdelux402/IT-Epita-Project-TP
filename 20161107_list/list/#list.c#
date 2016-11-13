@@ -195,7 +195,7 @@ void list_half_split(struct list *list, struct list *second)
   list -> next = NULL;
 }
 
-/*
+
 void freelist(struct list *liste)
 {
   if (liste -> next == NULL)
@@ -224,6 +224,8 @@ int main(){
   liste7->next = NULL;
   liste7->data = 69;
   
+
+
   printf("list_insert de: ");
   print_list(sentinelle);
   printf(" %d", liste7->data);
@@ -321,4 +323,3 @@ int main(){
   printf("\n");
   
 }
-*/
