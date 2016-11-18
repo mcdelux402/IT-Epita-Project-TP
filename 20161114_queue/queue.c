@@ -4,7 +4,8 @@
 # include <stdlib.h>
 
 # include "queue.h"
-# include "testing.c"
+
+void print_(struct queue *t);
 
 /*
  * queue_init(queue) initialize an empty queue container
@@ -12,10 +13,9 @@
  */
 void queue_init(struct queue *queue)
 {
-  struct list* list = malloc(sizeof (struct list));
-  list -> data = NULL;
-  list -> next = NULL;
-  queue -> store = list;
+  // list -> data = NULL;
+  //list -> next = NULL;
+  queue -> store = NULL;
   queue -> size = 0;
 }
 
@@ -34,39 +34,99 @@ int queue_is_empty(struct queue *queue)
  */
 void queue_push(struct queue *queue, void *elm)
 {
-  struct queue *q;
-  q = malloc(sizeof(struct queue));
-  queue_init(q);
-  q -> store -> data =  elm;
-  q ->  store -> next = queue -> store -> next;
-  queue -> store -> next = q -> store -> data; 
+  struct list * list = malloc(sizeof(list));
+  list -> data = elm;
+  if(queue -> size == 0)
+    {
+      list -> next = list;
+      queue -> store = list;
+    }
+  else
+    {
+      list -> next = queue -> store -> next ;
+      queue -> store -> next = list;
+      queue -> store = list;
+    }
+  queue -> size += 1;
+}
+
+void queue_push1(struct queue *queue, void *elm)
+{
+  struct list *tmp = malloc(sizeof(struct list));
+  tmp -> data = elm;
+  if (queue)
+    {
+      tmp -> next = queue -> store -> next;
+      queue -> store -> next = tmp;
+    }
+  else
+    {
+      tmp -> next = tmp;
+    }
   queue -> size = queue -> size + 1;
-  queue = q;
+  queue -> store = tmp;
+  free(tmp);
 }
 
 /*
  * queue_pop(queue) pop the next element (FIFO order)
  * returns NULL if the queue is empty
  */
+
 void* queue_pop(struct queue *queue)
 {
   if (queue -> size == 0)
     {
       return NULL;
     }
-  void * q1 = NULL;
-  struct queue *queue1;
-  queue1 = queue;
-  queue1 -> store = queue -> store -> next;
-  q1 = queue1 -> store -> data;
-  if(queue1 -> store  == queue1 -> store -> next)
+  struct list *listNext = queue -> store -> next;
+  //struct queue *queueNext;
+  listNext  = queue -> store -> next;
+  void *q1 = listNext -> data;
+  if(queue -> size  == 1)
     {
-      queue -> store -> data = NULL;
+      queue -> store = NULL;
     }
   else
     {
-      queue -> store -> next = queue1 -> store -> next; 
+      queue -> store -> next = listNext -> next;
     }
-  queue -> size -= 1;
+  queue -> size = queue -> size - 1;
   return q1;
 }
+
+void* queue_pop1(struct queue * queue)
+{
+  void *elm;
+  struct list *list;
+  if (queue -> size - 1 == 0)
+    {
+      elm = queue -> store -> next -> data;
+      queue -> store -> next = NULL;
+      list = queue -> store;
+      queue -> store = NULL;
+    }
+  else
+    {
+      list = queue -> store -> next;
+      elm = list -> data;
+      queue -> store -> next = list -> next;
+    }
+  free(list);
+  queue -> size -=1;
+  return elm;
+}
+
+/*
+void print_(struct queue *q)
+{
+  struct list *l = q->store;
+  for (size_t i = q->size; i < q->size; i++)
+    {
+      int *j = l->data;
+      printf("|%i", *j);
+      l = l->next;
+    }
+  printf("|\n");
+}
+*/

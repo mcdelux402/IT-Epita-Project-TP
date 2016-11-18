@@ -29,33 +29,33 @@ struct tree* build_tree(long depth, int *key)
 
 void bfs(struct tree *root)
 {
-  struct queue *queue;
+  struct queue *queue = malloc(sizeof(struct queue)); 
   if (root)
     {
       queue_init(queue);
       queue_push(queue, root);
       queue_push(queue, NULL);
-      struct queue *q;
-      while(queue_is_empty(queue) == 0)
+      struct tree *node = malloc(sizeof(struct tree));
+      while(!queue_is_empty(queue))
 	{
-	  q = queue_pop(queue);
-	  if (q)
+	  node = queue_pop(queue);
+	  if (node)
 	    {
-	      printf(q -> key);
-	      printtf(" ");
-	      if (q -> left)
+	      printf("%d ", node -> key);
+	      if (node -> left)
 		  queue_push(queue, node -> left);
-	      if (q -> right)
+	      if (node -> right)
 		queue_push(queue, node -> right);
 	    }
 	  else
 	    {
-	      printf("");
-	      if(queue_is_empty(queue) == 0)
+	      printf("\n");
+	      if(!queue_is_empty(queue))
 		queue_push(queue, NULL);
 	    }
 	}
     }
+  free(queue);
 }
 
 void delete_tree(struct tree *root)

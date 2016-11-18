@@ -1,30 +1,16 @@
-# Makefile
-# Tom Decrette
-
-# Compilers and options
 CC=gcc
-CPPFLAGS= -MMD
-CFLAGS= -Wall -Wextra -std=c99 -g
-LDFLAGS=
-LDLIBS=
+CFLAGS=-Wall -Wextra  -pedantic -std=c99
 
-SRC = queue.c testing.c tree.c
-OBJ = ${SRC:.c=.o}
-DEP = ${SRC:.c=.d}
+QUEUE_SRC= queue.c testing.c
+TREE_SRC = queue.c tree.c
+.PHONY: queue tree clean
 
-all: testing tree
+queue:
+	$(CC) $(CFLAGS) $(QUEUE_SRC) -o queue -g
 
-testing: queue.o testing.o
-
--include queue.d testing.d
-
-tree: queue.o tree.o
-
--include queue.d tree.d
+tree:
+	$(CC) $(CFLAGS) $(TREE_SRC) -o tree -g
 
 clean:
-	rm -f ${OBJ} ${DEP}
-	rm -f testing tree
-
-# END
-
+	$(RM) queue
+	$(RM) tree
