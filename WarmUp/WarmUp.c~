@@ -1,0 +1,41 @@
+# include <stdio.h>
+# include <stdlib.h>
+
+int *FindTarget(int list[], size_t t,  int target)
+{
+  int *s = calloc(sizeof(int)*2);
+  size_t i = 0;
+  while (i < t - 1 && list[i] < target)
+    {
+      size_t j = i + 1;
+      while(j < t && list[j] < target)
+	{
+	  if (list[i] + list[j] == target)
+	    {
+	      *s[0] = i;
+	      *s[1] = j;
+	    }
+	  else
+	    {
+	      j++;
+	    }
+	}
+      i++;
+    }
+  printf("%s", *s[0]);
+  printf("%s", *s[1]);
+  
+  return(s);
+  free(s);
+}
+
+int main()
+{
+  int list[] = {2,7,11,15};
+  FindTarget(list, 4, 9));
+  return 0;
+}
+
+
+
+

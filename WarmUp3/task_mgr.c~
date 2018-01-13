@@ -1,0 +1,43 @@
+File Edit Options Buffers Tools C Help
+# define _XOPEN_SOURCE 700
+
+# include <err.h>
+# include <errno.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
+
+void read_data(int fd1, int fd2){
+  char* buf[256];
+  int r;
+  while(r = read(fd1[0], buf, 256))
+	write(fd2[1], buf, r);
+}
+
+void read(int fd1, char* name){
+  int fd;
+  char buf[256];
+  while((fd = open("file"), O_RDONLY) == -1){
+    
+  }
+}
+
+int main() {
+  int fd1[2];
+  int fd2[2];
+  pipe(fd1);
+  pipe(fd2);
+  char buf[256];
+  int r;
+  int r_fork == fork();
+  if (r_fork == 0){
+    while(r = read(fd[0], buf))
+      Print(fd[0], fd[1])
+  }
+  else{
+    ssize_t write(int fd, const void *buf, size_t count);
+  }
+  //read_data(STDIN_FILENO, STDOUT_FILENO);
+      return 0;
+}
